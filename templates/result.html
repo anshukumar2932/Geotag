@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head><title>Geotag Results</title></head>
+<body>
+  <h2>Geotag Updated Successfully!</h2>
+
+  <h3>Original Geotag:</h3>
+  <p><strong>Latitude:</strong> {{ lat_before }}°</p>
+  <p><strong>Longitude:</strong> {{ lng_before }}°</p>
+  <p><strong>Location:</strong> {{ location_before }}</p>
+
+  <h3>Updated Geotag:</h3>
+  <p><strong>Latitude:</strong> {{ lat_after }}°</p>
+  <p><strong>Longitude:</strong> {{ lng_after }}°</p>
+  <p><strong>Location:</strong> {{ location_after }}</p>
+
+  <h4>Original Image:</h4>
+  <img src="/{{ original }}" width="300">
+  <h4>Updated Image:</h4>
+  <img src="/{{ updated }}" width="300">
+
+  <br><br>
+  <a href="{{ url_for('index') }}">Back to Upload</a>
+</body>
+</html>
