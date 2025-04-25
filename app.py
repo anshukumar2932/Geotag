@@ -1,57 +1,47 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, request, render_template
+from PIL import Image
 import os
-from geo_utils import get_geo_tag, update_geo_tag, get_location_name
+from geo_utils import get_geo_tag, get_location_name, update_geo_tag  # Import your geo_utils functions
 
 app = Flask(__name__)
-app.secret_key = "secret_key"
-app.config['UPLOAD_FOLDER'] = 'uploads/'
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
+# Route to handle the form submission
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         file = request.files['image']
-        lat = float(request.form['latitude'])
-        lng = float(request.form['longitude'])
+        file_path = os.path.join("uploads", file.filename)
+        file.save(file_path)
 
-        if file and allowed_file(file.filename):
-            filename = file.filename
-            path_original = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(path_original)
+        # Process the image to get geotag
+        try:
+            # Get the current geotag of the image
+            lat_before, lng_before = get_geo_tag(file_path)
+            location_before = "Unknown location"
+            
+            if lat_before and lng_before:
+                # Get the location name using lat/lng
+                location_before = get_location_name(lat_before, lng_before)
 
-            lat_before, lng_before = get_geo_tag(path_original)
-            path_updated = os.path.join(app.config['UPLOAD_FOLDER'], f"updated_{filename}")
-            update_geo_tag(path_original, path_updated, lat, lng)
-            lat_after, lng_after = get_geo_tag(path_updated)
-
-            # Reverse geocode
-            location_before = get_location_name(lat_before, lng_before) if lat_before else "No location found"
+            # After the user updates the geotag, capture new latitude and longitude
+            lat_after = float(request.form['latitude'])
+            lng_after = float(request.form['longitude'])
             location_after = get_location_name(lat_after, lng_after)
 
-            # Store in session
-            session.update({
-                'original': path_original,
-                'updated': path_updated,
-                'lat_before': lat_before,
-                'lng_before': lng_before,
-                'lat_after': lat_after,
-                'lng_after': lng_after,
-                'location_before': location_before,
-                'location_after': location_after
-            })
+            # Update the geotag of the image with new latitude and longitude
+            updated_image_path = os.path.join("uploads", "updated_" + file.filename)
+            update_geo_tag(file_path, updated_image_path, lat_after, lng_after)
 
-            return redirect(url_for('result'))
+            # Render the result page with the geotag details
+            return render_template('result.html',
+                                   lat_before=lat_before, lng_before=lng_before, location_before=location_before,
+                                   lat_after=lat_after, lng_after=lng_after, location_after=location_after,
+                                   original=file.filename, updated="updated_" + file.filename)
 
+        except Exception as e:
+            return str(e)
+    
     return render_template('index.html')
-
-@app.route('/result')
-def result():
-    return render_template('result.html', **session)
 
 if __name__ == '__main__':
     app.run(debug=True)

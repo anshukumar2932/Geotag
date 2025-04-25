@@ -29,9 +29,8 @@ def get_geo_tag(image_path):
             if lat_ref == b'S': lat_deg *= -1
             if lng_ref == b'W': lng_deg *= -1
             return lat_deg, lng_deg
-    except:
-        pass
-    return None, None
+    except Exception as e:
+        return None, None
 
 def update_geo_tag(image_path, output_path, lat, lng):
     img = Image.open(image_path)

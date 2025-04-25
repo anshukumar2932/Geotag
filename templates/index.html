@@ -1,19 +1,32 @@
 <!DOCTYPE html>
-<html>
-<head><title>GeoTag Uploader</title></head>
-<body>
-  <h2>Upload an Image & Update Geotag</h2>
-  <form method="POST" enctype="multipart/form-data">
-    <label>Image:</label><br>
-    <input type="file" name="image" required><br><br>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoTag Uploader</title>
+  <script src="https://cdn.tailwindcss.com"></script> <!-- Tailwind CDN -->
+</head>
+<body class="bg-gray-100 font-sans text-gray-900 p-6">
+  <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+    <h2 class="text-3xl font-semibold text-center mb-6">Upload an Image & Update Geotag</h2>
+    <form method="POST" enctype="multipart/form-data">
+      <div class="mb-4">
+        <label class="block text-lg font-medium mb-2">Image:</label>
+        <input type="file" name="image" accept=".jpeg,.jpg,.png" required class="border border-gray-300 p-2 rounded w-full">
+      </div>
 
-    <label>New Latitude:</label><br>
-    <input type="number" name="latitude" step="any" required><br><br>
+      <div class="mb-4">
+        <label class="block text-lg font-medium mb-2">New Latitude:</label>
+        <input type="number" name="latitude" step="any" required class="border border-gray-300 p-2 rounded w-full">
+      </div>
 
-    <label>New Longitude:</label><br>
-    <input type="number" name="longitude" step="any" required><br><br>
+      <div class="mb-4">
+        <label class="block text-lg font-medium mb-2">New Longitude:</label>
+        <input type="number" name="longitude" step="any" required class="border border-gray-300 p-2 rounded w-full">
+      </div>
 
-    <button type="submit">Upload & Update</button>
-  </form>
+      <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600">Upload & Update</button>
+    </form>
+  </div>
 </body>
 </html>
